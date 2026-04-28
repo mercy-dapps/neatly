@@ -29,7 +29,7 @@ impl Category {
         match self {
             Category::Images => "images",
             Category::Documents => "documents",
-            Category::Video => "Videoideo",
+            Category::Video => "video",
             Category::Audio => "audio",
             Category::Code => "code",
             Category::Archives => "archives",

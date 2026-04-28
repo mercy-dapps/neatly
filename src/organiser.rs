@@ -85,7 +85,7 @@ pub fn organise(dir: &Path, entries: &[FileEntry]) -> Result<(), NeatlyError> {
 
         // record the move before doing it
         log.push(LogEntry { 
-            from: destination.to_string_lossy().to_string(), 
+            from: entry.path.to_string_lossy().to_string(), 
             to: destination.to_string_lossy().to_string()
          });
 
@@ -119,8 +119,23 @@ pub fn undo(dir: &Path) -> Result<(), NeatlyError> {
     .map_err(|e| NeatlyError::UndoFailed(e.to_string()))?;
 
     for entry in &log {
-        fs::rename(&entry.from, &entry.to)?;
-        println!(" Restored: {}", entry.to);
+        fs::rename(&entry.to, &entry.from)?;
+        println!(" Restored: {}", entry.from);
+    }
+
+    let category_dirs = log.iter()
+    .map(|e| {
+        Path::new(&e.from)
+        .parent()
+        .map(|p| p.to_path_buf())
+    })
+    .filter_map(|p| p)
+    .collect::<std::collections::HashSet<_>>();
+
+    for folder in category_dirs {
+        if folder != dir {
+            let _ = fs::remove_dir(&dir); // only removes if empty
+        }
     }
 
     fs::remove_file(&log_path)?;
