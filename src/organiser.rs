@@ -125,7 +125,7 @@ pub fn undo(dir: &Path) -> Result<(), NeatlyError> {
 
     let category_dirs = log.iter()
     .map(|e| {
-        Path::new(&e.from)
+        Path::new(&e.to)
         .parent()
         .map(|p| p.to_path_buf())
     })
@@ -134,7 +134,7 @@ pub fn undo(dir: &Path) -> Result<(), NeatlyError> {
 
     for folder in category_dirs {
         if folder != dir {
-            let _ = fs::remove_dir(&dir); // only removes if empty
+            let _ = fs::remove_dir(&folder); // only removes if empty
         }
     }
 
